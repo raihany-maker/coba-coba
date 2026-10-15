@@ -161,4 +161,90 @@ with tab1:
 
             fig2 = go.Figure()
             fig2.add_trace(go.Bar(
-                x=df_
+                x=df_bar2['Kategori_BM_Sosial'],
+                y=df_bar2['PENGANGGURAN'],
+                text=df_bar2['PENGANGGURAN'].round(2),
+                textposition='auto',
+                marker_color=['#AB63FA', '#FFA15A', '#19D3F3']
+            ))
+            fig2.update_layout(
+                template='plotly_dark',
+                xaxis_title='Kelompok BM Perlindungan Sosial',
+                yaxis_title='Rata-Rata Pengangguran (%)',
+                margin=dict(l=20, r=20, b=30, t=40),
+                height=450
+            )
+            st.plotly_chart(fig2, use_container_width=True)
+        else:
+            st.warning("Variasi data BM Perlindungan Sosial tidak mencukupi.")
+
+
+with tab2:
+    col3, col4 = st.columns(2)
+
+    # --- CHART 3: HORIZONTAL BAR TOP N KOTA ---
+    with col3:
+        st.subheader(f"3. BM Ekonomi vs BM Sosial (Top {top_n} Kota)")
+        df_top = (
+            df_filtered.groupby('Kota')[['bm_ekonomi', 'bm_perlindungan_sosial']]
+            .mean()
+            .nlargest(top_n, 'bm_ekonomi')
+            .sort_values('bm_ekonomi', ascending=True)
+            .reset_index()
+        )
+
+        fig3 = go.Figure()
+        fig3.add_trace(go.Bar(
+            y=df_top['Kota'], x=df_top['bm_ekonomi'],
+            name='Rata-Rata BM Ekonomi', orientation='h', marker_color='#636EFA'
+        ))
+        fig3.add_trace(go.Bar(
+            y=df_top['Kota'], x=df_top['bm_perlindungan_sosial'],
+            name='Rata-Rata BM Sosial', orientation='h', marker_color='#FF6692'
+        ))
+        fig3.update_layout(
+            template='plotly_dark',
+            barmode='group',
+            xaxis_title='Rata-Rata Anggaran',
+            yaxis_title='Kota',
+            margin=dict(l=100, r=20, b=30, t=40),
+            height=500
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+    # --- CHART 4: TREN TAHUNAN ANTAR KOTA ---
+    with col4:
+        st.subheader("4. Tren Pengangguran Tahunan Antar Kota")
+        if selected_kota:
+            df_line = df_filtered[df_filtered['Kota'].isin(selected_kota)].sort_values('Tahun')
+
+            fig4 = go.Figure()
+            for kota in selected_kota:
+                df_k = df_line[df_line['Kota'] == kota]
+                if not df_k.empty:
+                    fig4.add_trace(go.Scatter(
+                        x=df_k['Tahun'], y=df_k['PENGANGGURAN'],
+                        mode='lines+markers', name=kota,
+                        marker=dict(size=7),
+                        line=dict(width=2.5)
+                    ))
+
+            fig4.update_layout(
+                template='plotly_dark',
+                xaxis_title='Tahun',
+                yaxis_title='Tingkat Pengangguran (%)',
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+                xaxis=dict(showgrid=True, gridcolor='#444444', griddash='dash', dtick=1),
+                yaxis=dict(showgrid=True, gridcolor='#444444', griddash='dash'),
+                margin=dict(l=20, r=20, b=30, t=50),
+                height=500
+            )
+            st.plotly_chart(fig4, use_container_width=True)
+        else:
+            st.info("Pilih minimal satu kota di sidebar untuk menampilkan tren.")
+
+
+with tab3:
+    st.subheader("📋 Preview Data Terfiltrasi")
+    st.dataframe(df_filtered, use_container_width=True)
+    st.caption(f"Menampilkan {len(df_filtered)} baris data.")
