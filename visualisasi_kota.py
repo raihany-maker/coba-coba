@@ -14,34 +14,49 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CUSTOM CSS TEMA PASTEL / LUCU ---
+# --- CUSTOM CSS PERBAIKAN WARNA FONT & KONTRAS ---
 st.markdown("""
 <style>
-    /* Background utama & sidebar */
+    /* 1. Background Utama & Sidebar */
     .stApp {
         background-color: #FAF5FF;
+        color: #2B2D42 !important;
     }
     [data-testid="stSidebar"] {
         background-color: #FFF0F5;
         border-right: 2px solid #FFD1DC;
     }
 
-    /* Kartu Metric / KPI */
+    /* 2. Warna Teks Umum, Paragraf, Label & Caption */
+    body, p, span, label, .stMarkdown, caption, [data-testid="stSidebar"] * {
+        color: #332C42 !important;
+    }
+
+    /* 3. Judul Header */
+    h1, h2, h3, h4, h5, h6 {
+        color: #5E4B8B !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700 !important;
+    }
+
+    /* 4. Perbaikan Kartu Metric / KPI (Angka & Judul) */
     .stMetric {
-        background-color: #FFFFFF;
+        background-color: #FFFFFF !important;
         padding: 15px;
         border-radius: 12px;
         border: 2px solid #FFE5EC;
         box-shadow: 0px 4px 10px rgba(255, 182, 193, 0.2);
     }
-
-    /* Warna judul & teks */
-    h1, h2, h3, h4, h5, h6, label {
+    [data-testid="stMetricValue"] {
         color: #5E4B8B !important;
-        font-family: 'Poppins', sans-serif;
+        font-weight: bold !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #4A3E6D !important;
+        font-weight: 600 !important;
     }
 
-    /* Tab Navigasi */
+    /* 5. Perbaikan Tab Navigasi */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
     }
@@ -49,19 +64,36 @@ st.markdown("""
         background-color: #FFE5EC;
         border-radius: 12px 12px 0px 0px;
         padding: 8px 16px;
-        color: #5E4B8B;
-        font-weight: 600;
         border: none;
+    }
+    .stTabs [data-baseweb="tab"] p {
+        color: #5E4B8B !important;
+        font-weight: 600 !important;
     }
     .stTabs [aria-selected="true"] {
         background-color: #FFB3C1 !important;
+    }
+    .stTabs [aria-selected="true"] p {
         color: #2B2D42 !important;
+        font-weight: 700 !important;
     }
 
-    /* Tag multiselect */
+    /* 6. Perbaikan Dropdown / Selectbox & Multiselect */
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #2B2D42 !important;
+        border-radius: 8px !important;
+        border: 1px solid #FFC6D9 !important;
+    }
+    div[data-baseweb="select"] * {
+        color: #2B2D42 !important;
+    }
     span[data-baseweb="tag"] {
         background-color: #FF8FA3 !important;
         border-radius: 8px !important;
+    }
+    span[data-baseweb="tag"] span {
+        color: #FFFFFF !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -88,7 +120,7 @@ except Exception as e:
 # ---------------------------------------------------------
 st.sidebar.image("https://img.icons8.com/color/96/analytics.png", width=70)
 st.sidebar.title("⚙️ Filter & Panel")
-st.sidebar.markdown("Atur filter di bawah untuk menyesuaikan data pada visualisasi.")
+st.sidebar.caption("Atur filter di bawah untuk menyesuaikan data pada visualisasi.")
 
 # Filter Tahun
 min_tahun = int(df['Tahun'].min()) if 'Tahun' in df.columns else 2000
@@ -111,11 +143,11 @@ selected_kota = st.sidebar.multiselect(
     default=default_kota if default_kota else semua_kota[:4]
 )
 
-# --- UBAH SLIDER MENJADI SELECTBOX (OPSI) ---
+# Opsi Jumlah Top Kota
 top_n = st.sidebar.selectbox(
     "📊 Jumlah Top Kota (BM Ekonomi vs Sosial)",
     options=[5, 10, 12, 15, 20, 25],
-    index=3  # Default 15
+    index=3
 )
 
 # Apply Filter Data
@@ -151,7 +183,7 @@ st.markdown("---")
 
 
 # ---------------------------------------------------------
-# 5. GRAFIK DENGAN LAYOUT TABS (TAB PREVIEW DIHAPUS)
+# 5. GRAFIK DENGAN LAYOUT TABS
 # ---------------------------------------------------------
 tab1, tab2 = st.tabs(["📌 Analisis Hubungan & Kategori", "🏛️ Perbandingan Antar Kota"])
 
@@ -182,6 +214,7 @@ with tab1:
             ))
             fig1.update_layout(
                 template='plotly_white',
+                font=dict(color='#332C42'),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
                 xaxis_title='BM Ekonomi',
@@ -215,6 +248,7 @@ with tab1:
             ))
             fig2.update_layout(
                 template='plotly_white',
+                font=dict(color='#332C42'),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
                 xaxis_title='Kelompok BM Perlindungan Sosial',
@@ -252,6 +286,7 @@ with tab2:
         ))
         fig3.update_layout(
             template='plotly_white',
+            font=dict(color='#332C42'),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             barmode='group',
@@ -281,6 +316,7 @@ with tab2:
 
             fig4.update_layout(
                 template='plotly_white',
+                font=dict(color='#332C42'),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
                 xaxis_title='Tahun',
