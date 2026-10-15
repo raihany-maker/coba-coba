@@ -17,7 +17,7 @@ from plotly.subplots import make_subplots
 import plotly.io as pio
 
 # Memaksa Plotly merender grafik interaktif di sel Google Colab
-pio.renderers.default = 'colab'
+# pio.renderers.default = 'colab'
 
 # Load Dataset langsung dari GitHub
 url = 'https://raw.githubusercontent.com/Alam-A99/DATAAKSI/refs/heads/main/dataset_fiskal_97_hipoFull.csv'
